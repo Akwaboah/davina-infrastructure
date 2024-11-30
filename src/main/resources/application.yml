@@ -1,0 +1,16 @@
+# application.yml (shared configuration)
+spring:
+  application:
+    name: hotel-infrastructure
+  profiles:
+    active: dev
+
+server:
+  port: 9090
+debug: true
+
+logging:
+  level:
+    org.springframework.core.env: debug
+    web: debug
+    sql: debug
