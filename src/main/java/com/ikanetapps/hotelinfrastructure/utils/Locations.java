@@ -1,6 +1,6 @@
 package com.ikanetapps.hotelinfrastructure.utils;
 
-public enum Location {
+public enum Locations {
     ACCRA,
     KUMASI
 }

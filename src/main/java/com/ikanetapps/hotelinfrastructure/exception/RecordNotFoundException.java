@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
-public class CustomerPhoneNotFoundException extends RuntimeException {
+public class RecordNotFoundException extends RuntimeException {
     private final String message;
 
 }

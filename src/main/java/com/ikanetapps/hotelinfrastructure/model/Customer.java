@@ -2,12 +2,11 @@ package com.ikanetapps.hotelinfrastructure.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Entity
 @Table(name = "customer", indexes = {
@@ -15,14 +14,15 @@ import java.util.Objects;
 })
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"phone", "email"})
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Customer {
+public final class Customer {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_seq_gen")
+    @SequenceGenerator(name = "customer_seq_gen", sequenceName = "customer_seq", allocationSize = 1)
+    @Column(nullable = false)
     private Long id;
 
     @Column(name = "first_name", nullable = false)
@@ -41,23 +41,20 @@ public class Customer {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @Column(name = "last_visit", nullable = false)
-    @CreatedDate
     private LocalDateTime lastVisit;
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return getId() != null && Objects.equals(getId(), customer.getId());
+        return id != null && id.equals(customer.id);
     }
 
     @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

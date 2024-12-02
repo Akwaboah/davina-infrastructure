@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * DTO for {@link com.ikanetapps.hotelinfrastructure.model.Customer}
  */
-public record CustomerDto(
+public record CustomerInputDto(
         Long id,
         @NotBlank(message = "Firstname must not be empty") String firstName,
         @NotBlank(message = "Lastname must not be empty") String lastName,

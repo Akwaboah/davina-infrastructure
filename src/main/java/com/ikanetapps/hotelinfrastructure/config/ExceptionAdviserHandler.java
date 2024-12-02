@@ -1,9 +1,10 @@
 package com.ikanetapps.hotelinfrastructure.config;
 
-import com.ikanetapps.hotelinfrastructure.exception.CustomerPhoneNotFoundException;
+import com.ikanetapps.hotelinfrastructure.exception.RecordNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
@@ -65,17 +66,33 @@ public class ExceptionAdviserHandler {
     }
 
     // 404
-    @ExceptionHandler(CustomerPhoneNotFoundException.class)
-    ProblemDetail handleUsernameNotFoundException(final CustomerPhoneNotFoundException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Customer not found");
+    @ExceptionHandler(RecordNotFoundException.class)
+    ProblemDetail handleUsernameNotFoundException(final RecordNotFoundException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Record not found");
         problemDetail.setProperty("message", ex.getMessage());
         return problemDetail;
     }
 
     // 422
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    ProblemDetail handleDataIntegrityViolationException(final DataIntegrityViolationException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, "Unprocessable Entity");
+        problemDetail.setProperty("message", getRootCauseMessage(ex));
+        return problemDetail;
+    }
+
+    private String getRootCauseMessage(Throwable throwable) {
+        Throwable rootCause = throwable;
+        while (rootCause.getCause() != null) {
+            rootCause = rootCause.getCause();
+        }
+        return rootCause.getMessage();
+    }
+
+    // 500
     @ExceptionHandler(RuntimeException.class)
     ProblemDetail handleRuntimeException(final RuntimeException ex) {
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage());
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
         problemDetail.setProperty("message", ex.getMessage());
         return problemDetail;
     }

@@ -7,28 +7,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomerMapper {
 
-    public Customer toEntity(@NotNull final CustomerDto customerDto) {
-        if (customerDto == null) {
+    public Customer toEntity(@NotNull final CustomerInputDto inputDto) {
+        if (inputDto == null) {
             throw new NullPointerException("CustomerDto cannot be null");
         }
-        var customer = new Customer();
-        customer.setFirstName(customerDto.firstName());
-        customer.setLastName(customerDto.lastName());
-        customer.setPhone(customerDto.phone());
-        customer.setEmail(customerDto.email());
+        Customer customer = new Customer();
+        customer.setId(inputDto.id());
+        customer.setFirstName(inputDto.firstName());
+        customer.setLastName(inputDto.lastName());
+        customer.setPhone(inputDto.phone());
+        customer.setEmail(inputDto.email());
         return customer;
     }
 
-    public CustomerDto toDto(@NotNull final Customer customer) {
-        if (customer == null) {
-            throw new NullPointerException("Customer entity cannot be null");
-        }
-        return new CustomerDto(
-                customer.getId(),
-                customer.getFirstName(),
-                customer.getLastName(),
-                customer.getPhone(),
-                customer.getEmail()
-        );
-    }
+
 }
